@@ -7,7 +7,7 @@ setup(
     include_package_data=True,
     license='BSD License',  # example license
     description='export Django Admin API by restful style',
-    url='https://github.com/nieoding/django-admin-api',
+    url='https://github.com/django-extend/django-admin-api.git',
     author='Nieo Ding',
     author_email='8285770@qq.com',
     install_requires = [

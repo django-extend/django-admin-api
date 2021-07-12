@@ -1,0 +1,6 @@
+.project
+.pydevproject
+build/
+dist/
+django_admin_api.egg-info/
+*.pyc

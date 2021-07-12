@@ -17,7 +17,7 @@ def parse_model(model: models.Model) -> ModelInfo:
     rs.app_label = meta.app_config.verbose_name
     rs.model_name = meta.model_name.lower()
     rs.model_label = meta.verbose_name
-    rs.prefix = f'{rs.app_name}/{rs.model_name}'
+    rs.prefix = f'resource/{rs.app_name}/{rs.model_name}'
     return rs
 
 

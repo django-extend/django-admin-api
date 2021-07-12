@@ -12,8 +12,9 @@ from django.db.models.fields.reverse_related import ManyToOneRel
 class DefaultSite():
     router: SimpleRouter
     actions = {}
-    def __init__(self):
+    def __init__(self, name='admin-api'):
         self._registry = {} # ModelAdmin内部get_fieldset会使用
+        self.name = name
         self.router = SimpleRouter(trailing_slash=True)
         
     @property
@@ -23,9 +24,8 @@ class DefaultSite():
             path('auth/login/', auth.login),
             path('auth/logout/', auth.logout),
             path('auth/userinfo/', auth.user_info),
-            path('auth/usernav/', auth.user_nav),
         )
-        return urlpatterns
+        return urlpatterns, 'admin-api', self.name
     
     def _patch_password_fields(self, admin, args):
         for name, _ in admin.passwords:

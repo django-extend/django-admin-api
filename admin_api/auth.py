@@ -11,6 +11,7 @@ from datetime import timedelta
 import jwt
 from rest_framework.authentication import BaseAuthentication,\
     get_authorization_header
+from django.utils.translation import gettext as _
 from rest_framework import HTTP_HEADER_ENCODING
 
 
@@ -120,25 +121,9 @@ def user_info(request):
             'component': '/views/Dashboard',
             'meta': {
                 'icon': 'dashboard',
-                'title': '首页',
+                'title': _('Site administration'),
             }
-        },
-        {   
-            'name': 'demo',
-            'component': '/views/Demo',
-            'key': 'demo',
-            'meta': {
-                'title': 'Demo',
-            }
-        },
-        {   
-            'name': 'demo2',
-            'key': 'demo2',
-            'component': '/views/Demo2',
-            'meta': {
-                'title': 'Demo2',
-            }
-        },    
+        }
     ]
     for app, app_info in perms.items():
         nav = {
@@ -172,52 +157,3 @@ def user_info(request):
         'menus': menus
     }
     return Response({'result': result})
-
-@api_view(['GET'])
-@authentication_classes([Authentication])
-@permission_classes([IsAdminUser])
-def user_nav(request):
-    from .sites import site
-    # user = request.user
-    menus = [
-        {
-            'name': 'dashboard',
-            'parentId': 0,
-            # 'id': 1,
-            'component': '/views/Dashboard',
-            'meta': {
-                'icon': 'dashboard',
-                'title': '首页',
-            }
-        },
-        {   
-            'name': 'demo',
-            'parentId': 0,
-            # 'id': 2,
-            'component': '/views/Demo',
-            'meta': {
-                'title': 'Demo',
-            }
-        },
-        {   
-            'name': 'demo2',
-            'parentId': 0,
-            # 'id': 2,
-            'component': '/views/Demo2',
-            'meta': {
-                'title': 'Demo2',
-            }
-        },    
-    ]
-    for prefix, viewset, _ in site.router.registry:
-        model = viewset.serializer_class.Meta.model
-        menu = {
-            'name': prefix,
-            'parentId': 0,
-            'component': '/components/Django',
-            'meta': {
-                'title': model._meta.verbose_name
-            }
-        }
-        menus.append(menu)
-    return Response({'result': menus})

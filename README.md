@@ -42,3 +42,10 @@ urlpatterns = [
   path('api/', admin_api.site.urls),
 ]
 ```
+
+# Frontend framework
+
+framework | project
+---|---
+ant-design(vue) | [antd-django](https://github.com/django-extend/antd-django.git)
+

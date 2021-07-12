@@ -33,11 +33,12 @@ Startup up a new project like so...
 
 # Step 3: export API with 'api' end-point
 
-    # example/urls.py
-    ...
-    import admin_api
-    urlpatterns = [
-      ...
-      path('api/', admin_api.site.urls),
-    ]
-
+```python
+# example/urls.py
+...
+import admin_api
+urlpatterns = [
+  ...
+  path('api/', admin_api.site.urls),
+]
+```

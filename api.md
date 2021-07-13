@@ -236,7 +236,7 @@ status_code = 401
 > params: None
 
 > return:
-```
+```json
 {
   "message": "string",
   "status": "int",

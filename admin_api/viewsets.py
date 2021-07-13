@@ -14,6 +14,7 @@ from django.contrib.admin.options import ModelAdmin
 from django.contrib import messages
 from django.db.models import fields
 from .core import get_passwords, ModelInfo
+from . import log
 from rest_framework.permissions import BasePermission
 
 class GeneralMetadata(SimpleMetadata):
@@ -86,6 +87,10 @@ class GeneralPermission(BasePermission):
 
 class GeneralSerializer(serializers.ModelSerializer):
     _admin: ModelAdmin = None
+    @property
+    def request(self):
+        return self.context['request']
+    
     def _del_file(self, instance):
         def filter_del_keys():
             prefix = '__del__'
@@ -109,13 +114,35 @@ class GeneralSerializer(serializers.ModelSerializer):
                 func = getattr(self._admin, func)
             validated_data[k] = func(validated_data, validated_data[k])
     def update(self, instance, validated_data):
+        def modify_fields():
+            rs = []
+            for k, v in validated_data.items():
+                oldv = getattr(instance, k)
+                if oldv != v:
+                    rs.append(k)
+            return rs
         self._del_file(instance)
         self._set_password(validated_data)
-        return serializers.ModelSerializer.update(self, instance, validated_data)
+        fields = modify_fields()
+        obj = serializers.ModelSerializer.update(self, instance, validated_data)
+        message = []
+        if len(fields) > 0:
+            item = {
+                'changed': {
+                'fields': fields,
+                }
+            }
+            message.append(item)
+        log.log_change(self.request, obj, message)
+        return obj
     
     def create(self, validated_data):
         self._set_password(validated_data)
-        return serializers.ModelSerializer.create(self, validated_data)
+        obj = serializers.ModelSerializer.create(self, validated_data)
+        message = [{'added': {}}]
+        log.log_addition(self.request, obj, message)
+        return obj
+    
 
 class GeneralListSerializer(serializers.ModelSerializer):
     _admin: ModelAdmin = None
@@ -140,6 +167,8 @@ class GeneralViewSet(viewsets.ModelViewSet):
     
  
     def _inner_delete(self, request, queryset):
+        for obj in queryset:
+            log.log_deletion(request, obj, str(obj))
         count, _ = queryset.delete()
         message = f'{count}条记录被删除'
         self._admin.message_user(request, message, messages.SUCCESS)
@@ -275,3 +304,6 @@ class GeneralViewSet(viewsets.ModelViewSet):
         instance = self.get_object()
         return Response({'str': instance.__str__()})
     
+    def perform_destroy(self, instance):
+        log.log_deletion(self.request, instance, str(instance))
+        viewsets.ModelViewSet.perform_destroy(self, instance)

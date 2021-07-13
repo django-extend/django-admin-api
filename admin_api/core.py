@@ -60,9 +60,3 @@ def get_passwords(admin):
     for name, funcname in admin.passwords:
         rs[name] = funcname
     return rs
-
-def is_password_type(admin, fieldname):
-    for name, _ in admin.passwords:
-        if name == fieldname:
-            return True
-    return False

@@ -27,12 +27,13 @@ class DefaultSite():
         )
         return urlpatterns, 'admin-api', self.name
     
-    def _patch_password_fields(self, admin, args):
+    def _patch_fields(self, admin, args):
+        # patch password
         for name, _ in admin.passwords:
             if admin.fields and name not in admin.fields:
                 continue
             field = admin.model._meta.get_field(name)
-            args[name] = serializers.CharField(write_only=True, label=field.verbose_name)
+            args[name] = serializers.CharField(write_only=True, label=field.verbose_name, style={'input_type': 'password'})
 
     def _gen_admin_class(self, model, admin_class):
         from django.contrib.auth.models import User
@@ -89,7 +90,7 @@ class DefaultSite():
     def _build_view_serialize_class(self, admin):
         args = {
         }
-        self._patch_password_fields(admin, args)
+        self._patch_fields(admin, args)
         for field in admin.opts.get_fields():
             t = type(field)
             if t in (ManyToManyField, ManyToOneRel):
@@ -107,7 +108,7 @@ class DefaultSite():
     def _build_serialize_class(self, admin):
         args = {
         }
-        self._patch_password_fields(admin, args)
+        self._patch_fields(admin, args)
         serializer_class: serializers.ModelSerializer = type('', (GeneralSerializer, ), args)
         serializer_class._admin = admin
         serializer_class.Meta = type('', (), {})

@@ -13,13 +13,24 @@ from .core import has_model_attr
 from django.contrib.admin.options import ModelAdmin
 from django.contrib import messages
 from django.db.models import fields
-from .core import get_passwords, is_password_type, ModelInfo
+from .core import get_passwords, ModelInfo
 from rest_framework.permissions import BasePermission
 
 class GeneralMetadata(SimpleMetadata):
     _view = None
     def __init__(self):
         pass
+    def _patch_input_type(self, field, data):
+        def is_password_type(admin, fieldname):
+            for name, _ in admin.passwords:
+                if name == fieldname:
+                    return True
+            return False
+        if is_password_type(self._view._admin, field.source):
+            data['input_type'] = 'password'
+        elif 'base_template' in field.style:
+            if field.style['base_template'] == 'textarea.html':
+                data['input_type'] = 'textarea'
 
     def determine_metadata(self, request, view):
         self._view = view
@@ -31,8 +42,7 @@ class GeneralMetadata(SimpleMetadata):
     def get_field_info(self, field):
         data = SimpleMetadata.get_field_info(self, field)
         data['write_only'] = field.write_only
-        if is_password_type(self._view._admin, field.source):
-            data['type'] = 'password'
+        self._patch_input_type(field, data)
         if isinstance(field, PrimaryKeyRelatedField):
             from .sites import site
             model = field.queryset.model
@@ -46,10 +56,10 @@ class GeneralMetadata(SimpleMetadata):
             if admin and admin.search_fields:
                 relation['lazy'] = True
             data['relation'] = relation
-            data['fieldType'] = 'ManyToOne'
+            data['field_type'] = 'ManyToOne'
         elif isinstance(field, ManyRelatedField):
             data['choices'] = field.get_choices()
-            data['fieldType'] = 'ManyToMany'
+            data['field_type'] = 'ManyToMany'
         elif isinstance(field, fields.DecimalField):
             data['decimal_places'] = field.decimal_places
         return data

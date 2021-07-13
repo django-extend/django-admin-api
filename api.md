@@ -148,13 +148,14 @@ status_code = 401
     "POST": {
       "{field}": {
         "type": "string",
+        "inputy_type": "string",
         "required": "boolean",
         "read_only": "boolean",
         "write_only": "boolean",
         "label": "string",
         "max_length": "int",
         "help_text": "string",
-        "fieldType": "string"
+        "field_ype": "string"
       }
     }
   },

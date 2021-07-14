@@ -21,6 +21,44 @@ class GeneralMetadata(SimpleMetadata):
     _view = None
     def __init__(self):
         pass
+    def _get_filters(self, view):
+        admin = view._admin
+        list_filter = []
+        for key in admin.list_filter:
+            field = admin.opts.get_field(key)
+            title = field.verbose_name
+            choices = field.choices
+            if not choices:
+                choices = []
+                t = type(field)
+                if t == fields.related.ManyToManyField:
+                    for k, v in field.get_choices():
+                        if k:
+                            choices.append((k, v))
+                elif t == fields.BooleanField:
+                    choices = (
+                        (1, '是'),
+                        (0, '否'),
+                    )
+            list_filter.append({
+                'key': key,
+                'label': title,
+                'choices': choices,
+            })
+        search_fields = []
+        for key in admin.search_fields:
+            field = admin.opts.get_field(key)
+            title = field.verbose_name
+            search_fields.append({
+                'key': key,
+                'label': title,
+            })
+        rs = {
+            'listFilter': list_filter,
+            'searchFields': search_fields,
+        }
+        return rs
+
     def _patch_input_type(self, field, data):
         def is_password_type(admin, fieldname):
             for name, _ in admin.passwords:
@@ -38,6 +76,8 @@ class GeneralMetadata(SimpleMetadata):
         data = SimpleMetadata.determine_metadata(self, request, view)
         data['fieldsets'] = view._admin.get_fieldsets(request)
         data['addFieldsets'] = view._admin.add_fieldsets
+        data['filters'] = self._get_filters(view)
+        data['pageSize'] = self._view._admin.list_per_page
         return data
     
     def get_field_info(self, field):
@@ -241,46 +281,6 @@ class GeneralViewSet(viewsets.ModelViewSet):
             rs.append(column)
         return rs
     
-    @action(detail=False)
-    def filters(self, _):
-        list_filter = []
-        for key in self._admin.list_filter:
-            field = self._model._meta.get_field(key)
-            title = field.verbose_name
-            choices = field.choices
-            if not choices:
-                choices = []
-                t = type(field)
-                if t == fields.related.ManyToManyField:
-                    for k, v in field.get_choices():
-                        if k:
-                            choices.append((k, v))
-                elif t == fields.BooleanField:
-                    choices = (
-                        (1, '是'),
-                        (0, '否'),
-                    )
-                # for item in self._model.objects.values_list(key, flat=True).distinct():
-                #     choices.append((item, f'{item}'))
-            list_filter.append({
-                'key': key,
-                'label': title,
-                'choices': choices,
-            })
-        search_fields = []
-        for key in self._admin.search_fields:
-            field = self._model._meta.get_field(key)
-            title = field.verbose_name
-            search_fields.append({
-                'key': key,
-                'label': title,
-            })
-        rs = {
-            'list_filter': list_filter,
-            'search_fields': search_fields,
-        }
-        return Response(rs)
-
     def list(self, request, *args, **kwargs):
         self.serializer_class = self.list_serializer_class
         data = viewsets.ModelViewSet.list(self, request, *args, **kwargs)

@@ -1,6 +1,7 @@
 from .viewsets import GeneralViewSet, GeneralListSerializer, GeneralSerializer
 from . import auth
 from .core import parse_model, has_model_attr, ModelInfo
+from .pagination import PagePagination
 from rest_framework.routers import SimpleRouter
 from rest_framework import serializers
 from django.urls.conf import path
@@ -53,6 +54,10 @@ class DefaultSite():
                 continue
             setattr(admin_class, name, ())
         return admin_class(model, self)
+    
+    def _build_pagination_class(self, admin):
+        pagination_class = type('', (PagePagination,), {'page_size': admin.list_per_page})
+        return pagination_class
     
     def _build_list_serialize_class(self, admin):
         args = {
@@ -175,6 +180,7 @@ class DefaultSite():
             viewset_class.autocomplete_serializer_class = self._build_autocomplete_serialize_class(admin)
             viewset_class.serializer_class = self._build_serialize_class(admin)
             viewset_class.view_serializer_class = self._build_view_serialize_class(admin)
+            viewset_class.pagination_class = self._build_pagination_class(admin)
             self._build_actions(viewset_class)
             self._registry[model] = admin
             self.router.register(info.prefix, viewset_class)

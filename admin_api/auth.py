@@ -129,7 +129,7 @@ def user_info(request):
         nav = {
             'name': app,
             'key': app,
-            'component': 'RouteView',
+            'component': 'menu',
             'meta': {
                 'title': app_info['label']
             },
@@ -141,7 +141,7 @@ def user_info(request):
             nav['children'].append({
                 'name': model._meta.label.lower(),
                 'key': model._meta.model_name.lower(),
-                'component': '/components/Django',
+                'component': 'django',
                 'meta': {
                     'title': model._meta.verbose_name,
                     'permission': format_permission_id(model),

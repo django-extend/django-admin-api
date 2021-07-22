@@ -118,7 +118,7 @@ def user_info(request):
         {
             'name': 'dashboard',
             'key': 'dashboard',
-            'component': '/views/Dashboard',
+            'component': 'dashboard',
             'meta': {
                 'icon': 'dashboard',
                 'title': _('Site administration'),
@@ -131,6 +131,7 @@ def user_info(request):
             'key': app,
             'component': 'menu',
             'meta': {
+                'icon': 'table',
                 'title': app_info['label']
             },
             'children': [],

@@ -50,6 +50,7 @@ urlpatterns = [
 框架 | 项目
 ---|---
 ant-design(vue) | [antd-django](https://github.com/django-extend/antd-django.git)
+element(vue) | [element-django](https://github.com/django-extend/element-django.git)
 
 后端项目创建完成以后，移步到前端框架项目中...
 

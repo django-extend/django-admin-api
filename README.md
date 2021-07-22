@@ -48,6 +48,7 @@ urlpatterns = [
 framework | project
 ---|---
 ant-design(vue) | [antd-django](https://github.com/django-extend/antd-django.git)
+element(vue) | [element-django](https://github.com/django-extend/element-django.git)
 
 # helper links
 

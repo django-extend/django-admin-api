@@ -1,5 +1,6 @@
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
+from django.core.paginator import EmptyPage
 
 
 class PagePagination(PageNumberPagination):
@@ -30,6 +31,9 @@ class PagePagination(PageNumberPagination):
         self.page_size = self.get_page_size(request)
         page_number = request.query_params.get(self.page_query_param, 1)
         paginator = self.django_paginator_class(queryset, self.page_size)
-        self.page = paginator.page(page_number)
+        try:
+            self.page = paginator.page(page_number)
+        except EmptyPage:
+            self.page = paginator.page(paginator.num_pages)
         self.request = request
         return list(self.page)

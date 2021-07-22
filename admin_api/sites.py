@@ -98,7 +98,7 @@ class DefaultSite():
         self._patch_fields(admin, args)
         for field in admin.opts.get_fields():
             t = type(field)
-            if t in (ManyToManyField, ManyToOneRel):
+            if t in (ManyToManyField,):
                 args[field.name] = serializers.StringRelatedField(many=True)
             elif t in (ForeignKey,):
                 args[field.name] = serializers.StringRelatedField(many=False)

@@ -45,10 +45,10 @@ urlpatterns = [
 
 # Frontend framework
 
-framework | project
----|---
-ant-design(vue) | [antd-django](https://github.com/django-extend/antd-django.git)
-element(vue) | [element-django](https://github.com/django-extend/element-django.git)
+framework | device | project
+---|---|---
+ant-design(vue) | pc | [antd-django](https://github.com/django-extend/antd-django.git)
+element(vue) | pc | [element-django](https://github.com/django-extend/element-django.git)
 vant(vue) | mobile | [vant-django](https://github.com/django-extend/vant-django.git)
 
 # helper links

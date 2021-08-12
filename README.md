@@ -47,8 +47,8 @@ urlpatterns = [
 
 # 前端框架列表
 
-框架 | 项目
----|---
+框架 | 设备 | 项目
+---|---|---
 ant-design(vue) | 桌面端 | [antd-django](https://github.com/django-extend/antd-django.git)
 element(vue) | 桌面端 | [element-django](https://github.com/django-extend/element-django.git)
 vant(vue) | 移动端 | [vant-django](https://github.com/django-extend/vant-django.git)

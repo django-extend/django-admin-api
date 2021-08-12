@@ -14,6 +14,8 @@ from rest_framework.authentication import BaseAuthentication,\
 from django.utils.translation import gettext as _
 from rest_framework import HTTP_HEADER_ENCODING
 
+from django.contrib.admin.sites import site as inner_site
+
 
 def create_token(user, **payload):
     salt = settings.SECRET_KEY
@@ -155,6 +157,7 @@ def user_info(request):
         'role': {
             'permissions': permissions
         },
+        'sitename': inner_site.site_header,
         'menus': menus
     }
     return Response({'result': result})

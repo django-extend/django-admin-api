@@ -8,7 +8,6 @@ from django.urls.conf import path
 from rest_framework.decorators import MethodMapper
 from dataclasses import field
 from django.db.models.fields.related import ManyToManyField, ForeignKey
-from django.db.models.fields.reverse_related import ManyToOneRel
 
 class DefaultSite():
     router: SimpleRouter

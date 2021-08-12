@@ -1,38 +1,40 @@
-English | [简体中文](./README.zh-CN.md)
+简体中文 | [English](./README.en-US.md)
 
 ----
 
-# Requirements
+# 版本要求
 
 * Python (3.5, 3.6, 3.7, 3.8, 3.9)
 * Django (2.2, 3.0, 3.1, 3.2)
 
-# Step 1: Installation
+# 第一步: 安装
 
-Install using `pip`...
+使用`pip`安装...
 
     pip install django-admin-api
 
-Add  to your `INSTALLED_APPS` setting as followed.
 
-    INSTALLED_APPS = [
-        ...
-        'rest_framework',
-        'django_filters',
-        'admin_api',
-    ]
+# 第二步: 创建一个简单项目
 
-# Step 2: Startup up a demo project
+```bash
+django-admin startproject example
+cd example
+./manage.py migrate
+./manage.py createsuperuser
+```
 
-Startup up a new project like so...
+`INSTALLED_APPS` 加入如下依赖.
+```python
+# example/settings.py
+INSTALLED_APPS = [
+    ...
+    'rest_framework',
+    'django_filters',
+    'admin_api',
+]
+```
 
-    django-admin startproject example
-    cd example
-    ./manage.py migrate
-    ./manage.py createsuperuser
-
-# Step 3: export API with 'api' end-point
-
+# 第三步: 输出API接口
 ```python
 # example/urls.py
 ...
@@ -43,16 +45,12 @@ urlpatterns = [
 ]
 ```
 
-# Frontend framework
+# 前端框架列表
 
-framework | project
+框架 | 项目
 ---|---
 ant-design(vue) | [antd-django](https://github.com/django-extend/antd-django.git)
 element(vue) | [element-django](https://github.com/django-extend/element-django.git)
 
-# helper links
-
-helper | link
----|---
-api detail | [document](api.md)
+后端项目创建完成以后，移步到前端框架项目中...
 

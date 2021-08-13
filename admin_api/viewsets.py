@@ -11,6 +11,7 @@ from rest_framework import filters
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.relations import PrimaryKeyRelatedField, ManyRelatedField
+from rest_framework.fields import DecimalField
 from django_filters.rest_framework.backends import DjangoFilterBackend
 from django.contrib.admin.options import ModelAdmin
 from django.contrib import messages
@@ -110,7 +111,7 @@ class GeneralMetadata(SimpleMetadata):
         elif isinstance(field, ManyRelatedField):
             data['choices'] = field.get_choices()
             data['field_type'] = 'ManyToMany'
-        elif isinstance(field, fields.DecimalField):
+        elif isinstance(field, DecimalField):
             data['decimal_places'] = field.decimal_places
         return data
 

@@ -76,7 +76,7 @@ def login(request):
         username = request.data['username']
         password = request.data['password']
         user = authenticate(username=username, password=password)
-        if not user:
+        if not user or not user.is_staff:
             raise Exception('验证失败')
         result = {
             'token': create_token(user)

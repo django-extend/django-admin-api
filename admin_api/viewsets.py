@@ -8,6 +8,8 @@ from rest_framework import viewsets, serializers
 from rest_framework.metadata import SimpleMetadata
 from rest_framework.permissions import BasePermission
 from rest_framework import filters
+from rest_framework.request import clone_request
+from rest_framework import exceptions
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.relations import PrimaryKeyRelatedField, ManyRelatedField
@@ -16,6 +18,8 @@ from django_filters.rest_framework.backends import DjangoFilterBackend
 from django.contrib.admin.options import ModelAdmin
 from django.contrib import messages
 from django.db import models
+from django.http import Http404
+from django.core.exceptions import PermissionDenied
 from django.db.models import fields
 
 class GeneralMetadata(SimpleMetadata):
@@ -90,6 +94,40 @@ class GeneralMetadata(SimpleMetadata):
         data['pageSize'] = self._view._admin.list_per_page
         return data
 
+    def determine_actions(self, request, view):
+        """
+        复制底层代码，修改权限验证逻辑
+        """ 
+        def check_permission(view):
+            for action in ('view', 'change', 'add'):
+                attrname = f'has_{action}_permission'
+                if getattr(view._admin, attrname)(view.request):
+                    return True
+        actions = {}
+        for method in {'PUT', 'POST'} & set(view.allowed_methods):
+            view.request = clone_request(request, method)
+            try:
+                # Test global permissions
+                # if hasattr(view, 'check_permissions'):
+                #     view.check_permissions(view.request)
+                if not check_permission(view):
+                    continue
+                
+                # Test object permissions
+                if method == 'PUT' and hasattr(view, 'get_object'):
+                    view.get_object()
+            except (exceptions.APIException, PermissionDenied, Http404):
+                pass
+            else:
+                # If user has appropriate permissions for the view, include
+                # appropriate metadata about the fields that should be supplied.
+                serializer = view.get_serializer()
+                actions[method] = self.get_serializer_info(serializer)
+            finally:
+                view.request = request
+
+        return actions
+
     def get_field_info(self, field):
         data = SimpleMetadata.get_field_info(self, field)
         data['write_only'] = field.write_only
@@ -134,6 +172,7 @@ class GeneralPermission(BasePermission):
             return True
         attrname = f'has_{action}_permission'
         return getattr(view._admin, attrname)(request)
+        
 
 class GeneralSerializer(serializers.ModelSerializer):
     _admin: ModelAdmin = None

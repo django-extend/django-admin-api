@@ -1,21 +1,21 @@
-from rest_framework import viewsets, serializers
 from .auth import Authentication
 from .pagination import PagePagination
-from django.db import models
+from .core import get_passwords, ModelInfo
+from .core import parse_model, get_short_description, get_field_title
+from .core import has_model_attr
+from . import log
+from rest_framework import viewsets, serializers
 from rest_framework.metadata import SimpleMetadata
-from django_filters.rest_framework.backends import DjangoFilterBackend
+from rest_framework.permissions import BasePermission
 from rest_framework import filters
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.relations import PrimaryKeyRelatedField, ManyRelatedField
-from .core import parse_model, get_short_description, get_field_title
-from .core import has_model_attr
+from django_filters.rest_framework.backends import DjangoFilterBackend
 from django.contrib.admin.options import ModelAdmin
 from django.contrib import messages
+from django.db import models
 from django.db.models import fields
-from .core import get_passwords, ModelInfo
-from . import log
-from rest_framework.permissions import BasePermission
 
 class GeneralMetadata(SimpleMetadata):
     _view = None
@@ -65,6 +65,12 @@ class GeneralMetadata(SimpleMetadata):
                 if name == fieldname:
                     return True
             return False
+        try:
+            source = self._view._admin.opts.get_field(field.source)
+            if source.default != fields.NOT_PROVIDED:
+                data['default'] = source.default
+        except:
+            pass
         if is_password_type(self._view._admin, field.source):
             data['input_type'] = 'password'
         elif 'base_template' in field.style:
@@ -79,7 +85,7 @@ class GeneralMetadata(SimpleMetadata):
         data['filters'] = self._get_filters(view)
         data['pageSize'] = self._view._admin.list_per_page
         return data
-    
+
     def get_field_info(self, field):
         data = SimpleMetadata.get_field_info(self, field)
         data['write_only'] = field.write_only

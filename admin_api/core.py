@@ -2,6 +2,8 @@ from django.db import models
 from django.db.models.options import Options
 from django.utils.text import capfirst
 from django.core.exceptions import FieldDoesNotExist
+from django.contrib.auth.hashers import make_password
+
 
 class ModelInfo:
     app_name = None
@@ -60,3 +62,6 @@ def get_passwords(admin):
     for name, funcname in admin.passwords:
         rs[name] = funcname
     return rs
+
+def set_password(_, rawPassword):
+    return make_password(rawPassword)

@@ -1,7 +1,8 @@
 from .viewsets import GeneralViewSet, GeneralListSerializer, GeneralSerializer
 from . import auth
-from .core import parse_model, has_model_attr, ModelInfo
+from .core import parse_model, has_model_attr, ModelInfo, set_password
 from .pagination import PagePagination
+from .fields import PasswordField
 from rest_framework.routers import SimpleRouter
 from rest_framework import serializers
 from django.urls.conf import path
@@ -39,15 +40,21 @@ class DefaultSite():
         from django.contrib.auth.models import User
         admin_class = type('',(admin_class,), {})
         if model == User:
+            # 给官方的UserAdmin打一下补丁
             # 官方的新增写法不标准（password1, password2），按drf协议修正一下
             admin_class.add_fieldsets = ((None, {'fields': ('username', 'password')}),)
             # 官方UserAdmin为了显示新增页面覆盖了get_fieldsets， 这里需要修正一下
             admin_class.get_fieldsets = eval('lambda self, request: self.fieldsets')
-            # 实现一下生成密码的方法
-            def set_password(_, rawPassword):
-                from django.contrib.auth.hashers import make_password
-                return make_password(rawPassword)
             admin_class.passwords = (('password',set_password),)
+        else:
+            # 自实现的PasswordField处理
+            passwords = []
+            for field in model._meta.get_fields():
+                if type(field) == PasswordField:
+                    passwords.append((field.name, field.method))
+            admin_class.passwords = passwords
+        
+        # 为admin_class注入2个属性（如果没有的话）
         for name in ('add_fieldsets', 'passwords'):
             if hasattr(admin_class, name):
                 continue

@@ -68,7 +68,10 @@ class GeneralMetadata(SimpleMetadata):
         try:
             source = self._view._admin.opts.get_field(field.source)
             if source.default != fields.NOT_PROVIDED:
-                data['default'] = source.default
+                default = source.default
+                if callable(default):
+                    default = default()
+                data['default'] = default
         except:
             pass
         if is_password_type(self._view._admin, field.source):

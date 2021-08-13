@@ -5,7 +5,7 @@ def read(f):
 
 setup(
     name='django-admin-api',
-    version='0.0.5',
+    version='0.0.6',
     packages=['admin_api'],
     zip_safe=False,
     include_package_data=True,

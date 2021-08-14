@@ -1,6 +1,11 @@
 简体中文 | [English](./README.en-US.md)
 
 ----
+<h1 align="center">django-admin-api</h1>
+<div align="center">Django Admin 前后端分离框架</div>
+
+- 体验登录账号：demo / demo
+- 体验网址（PC端）：http://antd.nieoding.com 
 
 # 版本要求
 

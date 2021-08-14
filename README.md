@@ -5,7 +5,7 @@
 <div align="center">Django Admin 前后端分离框架</div>
 
 - 体验登录账号：demo / demo
-- 体验网址（PC端）：http://antd.nieoding.com 
+- 体验网址（PC端）：http://antd.nieoding.ml
 
 # 版本要求
 

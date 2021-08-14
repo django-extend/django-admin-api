@@ -1,11 +1,16 @@
 简体中文 | [English](./README.en-US.md)
 
-----
 <h1 align="center">django-admin-api</h1>
 <div align="center">Django Admin 前后端分离框架</div>
 
 - 体验登录账号：demo / demo
-- 体验网址（PC端）：http://antd.nieoding.com 
+- 体验网站（PC端)(antd版本)：http://antd.nieoding.ml
+- 体验网址（PC端)(element版本): http://element.nieoding.ml
+- 体验网址（移动端）-- 手机扫码：
+
+<img src="https://gitee.com/django-extend/photowall/raw/master/vant.png" width="100"/>
+
+---
 
 # 版本要求
 

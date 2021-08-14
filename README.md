@@ -8,7 +8,7 @@
 - 体验网站（PC端）：http://antd.nieoding.ml
 - 体验网址（移动端）-- 手机扫码：
 
-<img src="https://gitee.com/django-extend/photowall/raw/master/vant.png" width="32"/>
+<img src="https://gitee.com/django-extend/photowall/raw/master/vant.png" width="100"/>
 
 # 版本要求
 

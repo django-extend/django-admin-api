@@ -7,7 +7,8 @@
 - 体验登录账号：demo / demo
 - 体验网站（PC端）：http://antd.nieoding.ml
 - 体验网址（移动端）-- 手机扫码：
-![image](https://gitee.com/django-extend/photowall/raw/master/vant.png)
+
+<img src="https://gitee.com/django-extend/photowall/raw/master/vant.png" width="32"/>
 
 # 版本要求
 
